@@ -14,16 +14,18 @@ describe('03_separation-of-concerns-demo routes', () => {
     return setup(pool);
   });
 
-  it('creates a new order in our database and sends a text message', () => {
-    return request(app)
-      .post('/api/v1/orders')
-      .send({ quantity: 10 })
-      .then((res) => {
-        // expect(createMessage).toHaveBeenCalledTimes(1);
-        expect(res.body).toEqual({
-          id: '1',
-          quantity: 10,
-        });
-      });
+  const user = {
+    id:'1',
+    firstName:'Snoop',
+    lastName:'Dogg',
+    email:'snoop@doggystyle.com',
+    phoneNumber:'5031234567'
+  }
+
+  it('creates a new user in our database', async () => {
+    const data = await request(app)
+      .post('/api/v1/users')
+      .send(user);
+    expect(data.body).toEqual(user)
   });
 });
