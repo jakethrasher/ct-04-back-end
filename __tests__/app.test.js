@@ -3,12 +3,14 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 const User = require('../lib/models/User');
+const ses = require('../lib/utils/ses');
 
-// jest.mock('twilio', () => () => ({
+// jest.mock('ses', () => () => ({
 //   messages: {
 //     create: jest.fn(),
 //   },
 // }));
+jest.mock('../lib/utils/ses.js');
 
 describe('lab-04 backend routes', () => {
   beforeEach(() => {
@@ -19,7 +21,7 @@ describe('lab-04 backend routes', () => {
     id:'1',
     firstName:'Snoop',
     lastName:'Dogg',
-    email:'snoop@doggystyle.com',
+    email:'mjakethrasher@gmail.com',
     phoneNumber:'5031234567'
   }
 
@@ -27,6 +29,7 @@ describe('lab-04 backend routes', () => {
     const data = await request(app)
       .post('/api/v1/users')
       .send(testUser);
+    expect(ses.sendEmail).toHaveBeenCalledTimes(1)
     expect(data.body).toEqual(testUser)
   });
 
@@ -53,11 +56,12 @@ describe('lab-04 backend routes', () => {
 
     const data = await request(app)
       .put('/api/v1/users/1')
-      .send({email:'doggy@dogworld', phoneNumber:'303222333'});
+      .send({email:'mjakethrasher@gmail.com', phoneNumber:'1112223333'});
 
     const dataFromDb = await request(app)
       .get('/api/v1/users/1')
-
+    
+    expect(ses.sendEmail).toHaveBeenCalledTimes(2)
     expect(data.body).toEqual(dataFromDb.body)
   });
 
